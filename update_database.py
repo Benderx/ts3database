@@ -64,10 +64,13 @@ class Filler:
                 #     y.messege_sent = False
 
                 if (int(client_info[0]['client_idle_time']) >= self.marked_afk):
-                    server.send_command('clientmove', keys={'clid': x['clid'], 'cid': afkid})
-                    print(x['username'] + 'lol2')
-                    x['online'] = False
-                    y.messege_sent = False
+                    # server.send_command('clientmove', keys={'clid': x['clid'], 'cid': afkid})
+                    # print(x['username'] + 'lol2')
+                    # x['online'] = False
+                    y.end_time = datetime.datetime.now() - y.idle_time
+                    y.total_time = (y.end_time - y.start_time).total_seconds()
+                    y.idle_time = 0
+                    y.online = False
 
 
                 for x in allusers:
@@ -76,6 +79,9 @@ class Filler:
                         break
             # If they were found to be offline
             else:
+                y.end_time = datetime.datetime.now() - y.idle_time
+                y.total_time = (y.end_time - y.start_time).total_seconds()
+                y.idle_time = 0
                 y.online = False
         print(allusers)
 
