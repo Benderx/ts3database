@@ -1,6 +1,7 @@
 from create_database import *
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import *
+from datetime import date, timedelta
 
 
 class Filler:
@@ -16,10 +17,16 @@ class Filler:
 
     # Updates the table of users
 
+    def set_users_offline(self):
+        online_users = self.usersOnline = self.session.query(UserInfo).filter(
+            UserInfo.online == True).all()
+        for y in online_users:
+            y.online = False
+
+
     def update_all_users(self, allusers, server, afkid):
         online_users = self.usersOnline = self.session.query(UserInfo).filter(
             UserInfo.online == True).all()
-
 
 
         # Appends all clients id's who are connected to the server currently
@@ -67,7 +74,7 @@ class Filler:
                     # server.send_command('clientmove', keys={'clid': x['clid'], 'cid': afkid})
                     # print(x['username'] + 'lol2')
                     # x['online'] = False
-                    y.end_time = datetime.datetime.now() - y.idle_time
+                    y.end_time = datetime.datetime.now() - timedelta(seconds=y.idle_time)
                     y.total_time = (y.end_time - y.start_time).total_seconds()
                     y.idle_time = 0
                     y.online = False
@@ -79,7 +86,8 @@ class Filler:
                         break
             # If they were found to be offline
             else:
-                y.end_time = datetime.datetime.now() - y.idle_time
+                print(type(datetime.datetime.now()))
+                y.end_time = datetime.datetime.now() - timedelta(seconds=y.idle_time)
                 y.total_time = (y.end_time - y.start_time).total_seconds()
                 y.idle_time = 0
                 y.online = False
