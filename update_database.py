@@ -22,6 +22,7 @@ class Filler:
             UserInfo.online == True).all()
         for y in online_users:
             y.online = False
+        self.session.commit()
 
 
     def update_all_users(self, allusers, server, afkid):
@@ -35,7 +36,6 @@ class Filler:
             # if str(x['clientDatabaseId']) not in all_client_ids:
             all_client_ids.append(x['client_database_id'])
         client_infos = {}
-        print(allusers)
 
         # Searches through all online users to either update their afk/idle time or set them offline if they left
         for y in online_users:
@@ -55,7 +55,6 @@ class Filler:
                 #    x.online = False
                 #    x.endTime = x.endTime - datetime.timedelta(minutes=15)
                 #    x.idleTime = x.idleTime - (15 * 60)
-                print(y.messege_sent)
 
                 # update to not send_commands
 
@@ -74,7 +73,7 @@ class Filler:
                     # server.send_command('clientmove', keys={'clid': x['clid'], 'cid': afkid})
                     # print(x['username'] + 'lol2')
                     # x['online'] = False
-                    y.end_time = datetime.datetime.now() - timedelta(seconds=y.idle_time)
+                    y.end_time = datetime.datetime.now() - timedelta(milliseconds=y.idle_time)
                     y.total_time = (y.end_time - y.start_time).total_seconds()
                     y.idle_time = 0
                     y.online = False
@@ -86,12 +85,10 @@ class Filler:
                         break
             # If they were found to be offline
             else:
-                print(type(datetime.datetime.now()))
-                y.end_time = datetime.datetime.now() - timedelta(seconds=y.idle_time)
+                y.end_time = datetime.datetime.now() - timedelta(milliseconds=y.idle_time)
                 y.total_time = (y.end_time - y.start_time).total_seconds()
                 y.idle_time = 0
                 y.online = False
-        print(allusers)
 
         # For any users that are still online but weren't online before (adding new users)
         for x in allusers:

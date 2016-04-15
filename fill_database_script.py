@@ -1,5 +1,5 @@
 import time
-from filler import Filler
+from update_database import Filler
 import config
 import ts3
 import datetime
@@ -30,7 +30,6 @@ def fill_database(ts3conn):
     afk_cid = ''
 
     for x in channels:
-        print(type(x))
         if x['channel_name'] == 'AFK':
             afk_cid = x['cid']
 
@@ -65,10 +64,13 @@ if __name__ == "__main__":
     SID = 1
     USER = str(config.username)
     PASS = str(config.password)
+    filler = Filler()
 
     with ts3.query.TS3Connection(HOST, PORT) as ts3conn:
         ts3conn.login(client_login_name=USER, client_login_password=PASS)
         ts3conn.use(sid=SID)
+        filler.set_users_offline()
+
         # hi = ts3conn.clientlist()
         # print(type(hi))
         # for client in ts3conn.clientlist():
@@ -76,15 +78,15 @@ if __name__ == "__main__":
         #         msg = "Hi {}".format(client["client_nickname"])
         #         ts3conn.clientpoke(clid=client["clid"], msg=msg)
 
-        try:
-            fill_database(ts3conn)
-        except:
-            logger.exception('Error Raised')
+        # try:
+        #     fill_database(ts3conn)
+        # except:
+        #     logger.exception('Error Raised')
 
-        # while True:
-        #     try:
-        #         fill_database(ts3conn)
-        #     except:
-        #         logger.exception('Error Raised')
-        #         break
-        #     time.sleep(15)
+        while True:
+            try:
+                fill_database(ts3conn)
+            except:
+                logger.exception('Error Raised')
+                break
+            time.sleep(15)
