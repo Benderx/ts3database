@@ -42,19 +42,14 @@ class Filler:
             # If they are still connected
             if str(y.client_database_id) in current_client_ids:
                 for x in current_users:
-                    if y.username == x['username']:
-                        # should check for success
+                    if x['client_database_id'] == str(y.client_database_id):
                         client_infos[x['clid']] = server.clientinfo(clid=x['clid'])
+                        current_users.remove(x)
                         break
                 y.end_time = datetime.datetime.now()
                 y.total_time = (y.end_time - y.start_time).total_seconds()
                 client_info = client_infos[x['clid']]
                 y.idle_time = int(client_info[0]['client_idle_time'])
-
-                #if x.idleTime >= self.marked_afk:
-                #    x.online = False
-                #    x.endTime = x.endTime - datetime.timedelta(minutes=15)
-                #    x.idleTime = x.idleTime - (15 * 60)
 
                 # update to not send_commands
 
@@ -75,19 +70,12 @@ class Filler:
                     # x['online'] = False
                     y.end_time = datetime.datetime.now() - timedelta(milliseconds=y.idle_time)
                     y.total_time = (y.end_time - y.start_time).total_seconds()
-                    y.idle_time = 0
                     y.online = False
 
-
-                for x in current_users:
-                    if x['client_database_id'] == str(y.client_database_id):
-                        current_users.remove(x)
-                        break
             # If they were found to be offline
             else:
                 y.end_time = datetime.datetime.now() - timedelta(milliseconds=y.idle_time)
                 y.total_time = (y.end_time - y.start_time).total_seconds()
-                y.idle_time = 0
                 y.online = False
 
         # For any users that are still online but weren't online before (adding new users)
