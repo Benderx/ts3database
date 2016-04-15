@@ -18,30 +18,30 @@ class Filler:
     # Updates the table of users
 
     def set_users_offline(self):
-        online_users = self.usersOnline = self.session.query(UserInfo).filter(
+        db_users = self.usersOnline = self.session.query(UserInfo).filter(
             UserInfo.online == True).all()
-        for y in online_users:
+        for y in db_users:
             y.online = False
         self.session.commit()
 
 
-    def update_all_users(self, allusers, server, afkid):
-        online_users = self.usersOnline = self.session.query(UserInfo).filter(
+    def update_all_users(self, current_users, server, afkid):
+        db_users = self.usersOnline = self.session.query(UserInfo).filter(
             UserInfo.online == True).all()
 
 
         # Appends all clients id's who are connected to the server currently
-        all_client_ids = []
-        for x in allusers:
-            # if str(x['clientDatabaseId']) not in all_client_ids:
-            all_client_ids.append(x['client_database_id'])
+        current_client_ids = []
+        for x in current_users:
+            # if str(x['clientDatabaseId']) not in current_client_ids:
+            current_client_ids.append(x['client_database_id'])
         client_infos = {}
 
         # Searches through all online users to either update their afk/idle time or set them offline if they left
-        for y in online_users:
+        for y in db_users:
             # If they are still connected
-            if str(y.client_database_id) in all_client_ids:
-                for x in allusers:
+            if str(y.client_database_id) in current_client_ids:
+                for x in current_users:
                     if y.username == x['username']:
                         # should check for success
                         client_infos[x['clid']] = server.clientinfo(clid=x['clid'])
@@ -79,9 +79,9 @@ class Filler:
                     y.online = False
 
 
-                for x in allusers:
+                for x in current_users:
                     if x['client_database_id'] == str(y.client_database_id):
-                        allusers.remove(x)
+                        current_users.remove(x)
                         break
             # If they were found to be offline
             else:
@@ -91,7 +91,7 @@ class Filler:
                 y.online = False
 
         # For any users that are still online but weren't online before (adding new users)
-        for x in allusers:
+        for x in current_users:
             if x['clid'] in client_infos.keys():
                 client_info = client_infos[x['clid']]
             else:
