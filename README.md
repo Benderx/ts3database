@@ -1,3 +1,3 @@
 # ts3database
-Python: A postgres database that tracks users connecting to a server.
-Made by Andrew Duerig and Ryan Quinn
+
+Python - A postgres database that tracks users connecting to a server, requires (https://github.com/benediktschmitt/py-ts3) to operate.
